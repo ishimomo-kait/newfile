@@ -165,7 +165,7 @@ def getSensorData(data):
     isPrevDisconfort = (float(discomfort_index) > DISCONFORT_THRESHOLD)
     
   
-    pr("Noisy index:noise level is "+sound_noise)
+    pr("Noisy index:noise level is "+ str(sound_noise)+ "hoge is "+ str(totalcount))
 
     return "%d,%s,%s,%s,%s,%s, %s,%s,%s,%s,%s, %s,%s,%s,%s,%s, %s,%s,%s,%s,%s, %s,%s,%s,%s,%s,%s" % (
        time.time()
