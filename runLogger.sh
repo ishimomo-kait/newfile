@@ -6,17 +6,18 @@ LOG_INTERVAL=60
 # Slack notification
 SLACK_URL = ''  #Git上で書き込むな
 #SLACK_URL = ''  # Disable slack post
-DISCONFORT_THRESHOLD = 90.0
+DISCONFORT_THRESHOLD = 90.0 #不快指数閾値
 
-NOISY = 70.0
+NOISY = 70 #暫定の騒音値
 
-RANDOM_NOTIFY_INTERVAL_AVG_SEC = 3*60*60 # 3 hours
+#RANDOM_NOTIFY_INTERVAL_AVG_SEC = 3*60*60 # ランダム発生するインターバル(現在不使用、この場合３時間)
 
 import sys,os,time,glob
 import argparse,json,serial
 from datetime import datetime
 import subprocess
 
+#---slack投稿とcsv出力---
 def PostToSlack(msg):
   if len(SLACK_URL)==0 :
     print(msg)
@@ -40,7 +41,7 @@ def pr(msg):
 MYPATH=os.path.dirname(os.path.abspath(__file__))
 
 FILENAME = "%s/log/%d.csv"%(MYPATH,time.time())
-pr('Output file: '+FILENAME)
+#pr('Output file: '+FILENAME)
 
 # LED display rule. Normal Off.
 DISPLAY_RULE_NORMALLY_OFF = 0
@@ -59,9 +60,9 @@ while True:
 OMRON_SERIAL_ID=devCandidates[0]
 #OMRON_SERIAL_ID="/dev/ttyUSB0"
 #OMRON_SERIAL_ID="/dev/serial/by-id/usb-OMRON_2JCIE-BU01_MY3AIXN7-if00-port0"
-pr('Connecting to '+OMRON_SERIAL_ID)
+#pr('Connecting to '+OMRON_SERIAL_ID)
 
-print('============')
+#int('============')
 
 
 def calc_crc(buf, length):
@@ -211,17 +212,17 @@ def getSensorData(data):
 #    }
 
 
-
-def addFile(str):
-  print('Output: '+str)
-  os.system('echo "'+str+'" >> '+FILENAME)
-
-addFile("unixtime,time_measured,temperature,relative_humidity,ambient_light,barometric_pressure" \
-     ",sound_noise,eTVOC,eCO2,discomfort_index,heat_stroke,vibration_information" \
-     ",si_value,pga,seismic_intensity,temperature_flag,relative_humidity_flag" \
-     ",ambient_light_flag,barometric_pressure_flag,sound_noise_flag,etvoc_flag" \
-     ",eco2_flag,discomfort_index_flag,heat_stroke_flag,si_value_flag" \
-     ",pga_flag,seismic_intensity_flag")
+#---ファイル出力---
+#def addFile(str):
+#  print('Output: '+str)
+#  os.system('echo "'+str+'" >> '+FILENAME)
+#
+#addFile("unixtime,time_measured,temperature,relative_humidity,ambient_light,barometric_pressure" \
+#     ",sound_noise,eTVOC,eCO2,discomfort_index,heat_stroke,vibration_information" \
+#    ",si_value,pga,seismic_intensity,temperature_flag,relative_humidity_flag" \
+#     ",ambient_light_flag,barometric_pressure_flag,sound_noise_flag,etvoc_flag" \
+#     ",eco2_flag,discomfort_index_flag,heat_stroke_flag,si_value_flag" \
+#     ",pga_flag,seismic_intensity_flag")
 
 import schedule
 
@@ -236,7 +237,7 @@ def job():
     time.sleep(0.1)
     data = serSensor.read(serSensor.inWaiting())
     sensorData = getSensorData(data)
-
+    pr("Noisy index:noise level is "+sound_noise)
     addFile(sensorData)
 
 #schedule.every(5).seconds.do(job)
@@ -244,7 +245,7 @@ def job():
 startSensor()
 
 import random
-rndNotifyCountdown = int( 0.5 * RANDOM_NOTIFY_INTERVAL_AVG_SEC + random.random() * RANDOM_NOTIFY_INTERVAL_AVG_SEC )
+#rndNotifyCountdown = int( 0.5 * RANDOM_NOTIFY_INTERVAL_AVG_SEC + random.random() * RANDOM_NOTIFY_INTERVAL_AVG_SEC )
 
 
 while True:
